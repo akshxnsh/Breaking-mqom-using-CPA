@@ -1,0 +1,74 @@
+{
+  "pooled_hw": [
+    {
+      "sigma": 0.5,
+      "n_sig": 40000,
+      "hw_estimate_bias": -0.000858969268267833,
+      "hw_estimate_std": 0.021688204752540973,
+      "hw_class_exact_rate": 1.0
+    },
+    {
+      "sigma": 1.0,
+      "n_sig": 40000,
+      "hw_estimate_bias": -0.0005022128688117592,
+      "hw_estimate_std": 0.02910566458110932,
+      "hw_class_exact_rate": 1.0
+    },
+    {
+      "sigma": 2.0,
+      "n_sig": 40000,
+      "hw_estimate_bias": 0.0012028201707721341,
+      "hw_estimate_std": 0.058650429815650565,
+      "hw_class_exact_rate": 1.0
+    }
+  ],
+  "avg_hw_class_size": 50.2734375,
+  "pooled_traces": [
+    {
+      "n_sig": 1000,
+      "sigma": 1.0,
+      "hw_class_exact_rate": 1.0
+    },
+    {
+      "n_sig": 5000,
+      "sigma": 1.0,
+      "hw_class_exact_rate": 1.0
+    },
+    {
+      "n_sig": 20000,
+      "sigma": 1.0,
+      "hw_class_exact_rate": 1.0
+    },
+    {
+      "n_sig": 80000,
+      "sigma": 1.0,
+      "hw_class_exact_rate": 1.0
+    }
+  ],
+  "bitlevel": [
+    {
+      "sigma": 0.25,
+      "n_sig": 20000,
+      "byte_exact_rate": 1.0,
+      "bit_error_rate": 0.0
+    },
+    {
+      "sigma": 0.5,
+      "n_sig": 20000,
+      "byte_exact_rate": 1.0,
+      "bit_error_rate": 0.0
+    },
+    {
+      "sigma": 1.0,
+      "n_sig": 20000,
+      "byte_exact_rate": 1.0,
+      "bit_error_rate": 0.0
+    },
+    {
+      "sigma": 2.0,
+      "n_sig": 20000,
+      "byte_exact_rate": 1.0,
+      "bit_error_rate": 0.0
+    }
+  ]
+}
