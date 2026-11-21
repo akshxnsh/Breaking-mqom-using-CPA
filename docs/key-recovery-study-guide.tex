@@ -1,0 +1,189 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!55!black}
+
+\definecolor{ink}{HTML}{1b2430}
+\definecolor{accent}{HTML}{234e70}
+\definecolor{soft}{HTML}{eef3f7}
+\definecolor{good}{HTML}{1f7a4d}
+
+\newtcolorbox{keybox}[1][]{colback=soft,colframe=accent,boxrule=0.6pt,
+  arc=2pt,left=6pt,right=6pt,top=5pt,bottom=5pt,fonttitle=\bfseries,title=#1}
+\newtcolorbox{notebox}[1][]{colback=white,colframe=good,boxrule=0.6pt,
+  arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt,fonttitle=\bfseries,title=#1}
+
+\setlist{nosep,leftmargin=1.2em}
+\newcommand{\gf}{\mathrm{GF}(256)}
+\newcommand{\hw}{\mathrm{HW}}
+\newcommand{\xor}{\oplus}
+\color{ink}
+
+\title{\vspace{-1.2cm}\textbf{Recovering the MQOM v2.1 Secret Key by CPA}\\[2pt]
+\large A short study guide --- how the attack works, not all of MQOM}
+\author{BTP: Side-Channel CPA Analysis of MQOM v2.1}
+\date{\today}
+
+\begin{document}
+\maketitle
+\vspace{-0.6cm}
+
+\begin{notebox}[Scope of this note]
+This explains \emph{how we recover the secret key}, with the minimum MQOM background
+needed. It deliberately does \textbf{not} explain the full MQOM signature scheme. Every
+result here is a \textbf{computer simulation} under stated leakage models --- a property
+of the models, \emph{not} a demonstrated weakness of any real device.
+\end{notebox}
+
+\section*{1\quad The 60-second picture}
+The secret key is a vector $x$ of \textbf{48 bytes} over the byte-field $\gf$ (the AES
+field). We recover it in three moves:
+\begin{enumerate}
+\item Split $x$ into a \textbf{prefix} (first 16 bytes) and a \textbf{suffix} (last 32 bytes).
+\item Recover each half separately with \textbf{CPA} (a side-channel guessing method), using
+two different moments in the signing computation.
+\item Stitch the halves together and \textbf{confirm} the full key with MQOM's public equations.
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[font=\small,node distance=6mm,
+  box/.style={draw=accent,fill=soft,rounded corners=2pt,inner sep=5pt,align=center,minimum height=9mm},
+  arr/.style={-{Latex[length=2mm]},accent,thick}]
+\node[box] (c) {\textbf{Candidate C}\\suffix: 32 bytes\\(key-XOR CPA)};
+\node[box,below=5mm of c] (b) {\textbf{Candidate B}\\prefix: 16 bytes\\(horizontal CPA)};
+\node[box,right=16mm of $(c)!0.5!(b)$] (asm) {\textbf{Assemble}\\$\hat{x}=\text{prefix}\,\Vert\,\text{suffix}$};
+\node[box,right=12mm of asm] (mq) {\textbf{Public MQ check}\\fix last bit,\\certify $\hat x=x$};
+\node[box,right=12mm of mq,fill=good!12,draw=good] (x) {\textbf{Secret}\\$x$ recovered};
+\draw[arr] (c.east) -- (asm.west);
+\draw[arr] (b.east) -- (asm.west);
+\draw[arr] (asm) -- (mq);
+\draw[arr] (mq) -- (x);
+\end{tikzpicture}
+\end{center}
+
+\section*{2\quad The minimum MQOM you need}
+Four facts are enough to follow the attack:
+\begin{itemize}
+\item \textbf{The key.} The secret witness $x\in\gf^{48}$ --- 48 bytes we want to find.
+\item \textbf{The public equations.} MQOM's public key fixes a quadratic system and its value
+at the secret:
+\[
+ y_i \;=\; x^{\!\top} A_i\,x \;+\; b_i^{\!\top} x,\qquad i=1,\dots,48,
+\]
+with all $A_i,b_i,y$ \textbf{public}. We only use this at the very end, as a check.
+\item \textbf{Where $x$ leaks.} While signing, $x$ is combined with public and random values.
+Two such moments each expose part of $x$ to analysis --- one for the suffix, one for the
+prefix. That is all we need from the signing algorithm.
+\item \textbf{The leakage model.} We assume the device's power/EM signal grows with the
+\textbf{Hamming weight} $\hw(v)$ (the number of 1-bits) of the byte $v$ it is handling. This
+is the standard, realistic assumption. In simulation: $\;L=\hw(v)+\text{noise}$.
+\end{itemize}
+
+\begin{keybox}[CPA in one line]
+\textbf{Correlation Power Analysis.} A fixed secret byte meets \emph{known, varying} data.
+For each guess $g\in\{0,\dots,255\}$ we predict the Hamming weight of an intermediate value,
+and correlate the prediction against the measured leakage $L$ over many samples:
+\[
+ \rho(g)=\mathrm{corr}\big(\,L,\ \hw(\text{intermediate}(g))\,\big),\qquad
+ \hat{x}= \arg\max_g |\rho(g)|.
+\]
+The correct guess lines up with the real leakage and gives the peak correlation.
+\end{keybox}
+
+\section*{3\quad Suffix (32 bytes) --- Candidate C}
+When signing, the key is blended with a random share sum $\mathrm{acc}$, producing a
+correction $\Delta = x \xor \mathrm{acc}$. For the \textbf{suffix} bytes, $\Delta$ is
+\emph{published in the signature} and changes every signature, while the secret operand
+$\mathrm{acc}$ is what leaks. Since
+\[
+ \mathrm{acc}[k] \;=\; x[k]\,\xor\,\Delta[k],
+\]
+this is the textbook \textbf{key-XOR CPA}: $\Delta[k]$ is the known varying data, and we guess
+$x[k]$ by predicting $\hw\big(g \xor \Delta[k]\big)$ and correlating across signatures.
+
+\begin{itemize}
+\item \textbf{One subtlety.} For an XOR target, a byte and its bit-flip (complement) look
+identical to $|\rho|$. Using the \emph{signed} correlation separates them, leaving just a
+single global $\pm$ sign for the whole suffix --- fixed later by the public equations.
+\item \textbf{Outcome.} All 32 suffix bytes, from a few hundred signatures at realistic noise.
+\end{itemize}
+
+\section*{4\quad Prefix (16 bytes) --- Candidate B}
+The suffix trick cannot reach the prefix (there $\Delta=0$, no varying public data). We use a
+different moment: the signer computes a matrix--vector product $t = A\,x$, in which each secret
+byte $x_j$ is multiplied by \textbf{many public numbers} $a$ \emph{within a single signing}.
+That gives a ``horizontal'' axis of known varying data:
+\[
+ \text{for many positions: leakage of } x_j\cdot a,\qquad
+ \rho(g)=\mathrm{corr}_{\text{positions}}\big(L,\ \hw(g\cdot a)\big).
+\]
+
+\begin{itemize}
+\item \textbf{Why it is clean.} Multiplying by a fixed $a$ is a one-to-one map, so the correct
+guess is the unique peak. A wrong guess $g$ only correlates through $c=g\cdot x_j^{-1}$, and
+no $c\neq 1$ mimics the truth --- so there is \emph{no} complement ambiguity here.
+\item \textbf{One blind spot.} If $x_j=0$ then $x_j\cdot a=0$ for every $a$: the channel is
+dead and that byte cannot be read this way. But we \textbf{detect} it (the peak collapses to
+noise), so it is never a silent error --- the public equations fill it in (Section 6).
+\item \textbf{Backup (Candidate F).} A second-order trick on the seed tree. Under the realistic
+model it only reveals each byte's \emph{Hamming weight}, not the byte --- so it stays a backup,
+never the main route.
+\item \textbf{Outcome.} All 16 prefix bytes (bar a detectable zero), robust to noise.
+\end{itemize}
+
+\section*{5\quad Assemble + certify (Part 3)}
+Now $\hat x = \text{prefix}\,\Vert\,\text{suffix}$, with two small leftovers: the suffix's
+global $\pm$ sign, and any detected zero byte. We resolve both with the \textbf{public MQ
+equations} from Section 2, used \emph{only as a check}:
+
+\begin{itemize}
+\item The true key satisfies all 48 equations $y_i = \hat x^{\!\top}A_i\hat x + b_i^{\!\top}\hat x$;
+a key wrong in even one byte fails essentially all of them (a sharp test).
+\item So we try the two sign options (and brute-fill a rare zero byte), and keep the one
+assignment that satisfies every equation. That \textbf{certifies} $\hat x = x$.
+\end{itemize}
+
+\begin{keybox}[The golden rule of this project]
+CPA does the \textbf{recovery}; the algebra only \textbf{combines, completes and verifies}.
+The equations are never used to \emph{solve} for the key --- only to pick the last bit, fill a
+detected gap, and prove the answer is right.
+\end{keybox}
+
+\section*{6\quad Does it work?}
+\begin{center}\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Step & What is recovered & Result (simulation) \\
+\midrule
+Candidate C & 32 suffix bytes & 100\% at realistic noise \\
+Candidate B & 16 prefix bytes & 100\% of non-zero bytes; zeros detected \\
+Assemble + MQ check & full 48-byte key & $\hat x = x$, 100\%, zero false accepts \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The pipeline was \textbf{independently audited}: the field math, the correlation
+code and the equations were re-derived and re-run from scratch, and a specific check confirmed
+the attacker never sees the key (removing the real signal drops recovery to chance). Honest
+scope: these are synthetic demonstrations under a stated leakage model, not a break of any real
+MQOM implementation.
+
+\section*{Glossary}
+\small
+\begin{itemize}
+\item $\gf$ --- arithmetic on bytes (the AES field); every byte is a field element.
+\item \textbf{Hamming weight} $\hw(v)$ --- number of 1-bits in byte $v$; our leakage model.
+\item \textbf{CPA} --- Correlation Power Analysis: guess a byte, predict a value's weight,
+correlate with leakage; the correct guess peaks.
+\item \textbf{Prefix / suffix} --- the first 16 / last 32 key bytes, recovered by Candidate B / C.
+\item \textbf{Synthetic leakage} --- simulated $L=\hw(v)+\text{noise}$; no real hardware.
+\end{itemize}
+
+\end{document}
