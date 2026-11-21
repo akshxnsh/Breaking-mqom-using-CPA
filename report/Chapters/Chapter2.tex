@@ -1,0 +1,86 @@
+This chapter surveys the work our project builds on. A recurring theme is the need to
+keep three different threat classes apart: \emph{physical side-channel analysis} (the
+subject of this project), \emph{mathematical cryptanalysis} (which attacks the public
+transcript, with no physical leakage), and \emph{fault attacks} (which actively perturb
+a computation). Conflating them would misrepresent what is actually known about MQOM.
+
+\section{MQOM and the MPCitH / TCitH Paradigm}
+
+MQOM~\cite{mqomspec} compiles a zero-knowledge proof of knowledge of a solution to an
+MQ system into a signature via the Fiat--Shamir transform. The secret witness $x$ is
+additively shared; a GGM seed tree expands one root seed into $N$ leaf seeds, each
+producing one share, and an all-but-one opening reveals every share except one. A
+\emph{correlated} half-tree optimisation ties the first $\lambda$ bits of $x$ into the
+tree, and a correction value $\Delta x = x \oplus \mathrm{acc\_x}$ (where
+$\mathrm{acc\_x}$ is the sum of the shares) closes the gap between the shares and the
+true secret. These structural facts, taken from the specification, determine where the
+secret meets public data and hence where CPA is even possible.
+
+\section{Side-Channel Precedents on MPCitH and MQ Signatures}
+
+The closest physical precedent is the single-trace attack of Godard et
+al.~\cite{godard2024} on the MPCitH framework, which mounts a Soft-Analytical
+Side-Channel Attack (belief propagation over a factor graph) on the finite-field
+multiplication inside a TCitH-family polynomial evaluation. Importantly, the authors
+note that when a public multiplier row consists only of zeros and ones, even perfect
+knowledge of the Hamming weight cannot isolate a single key candidate --- an early
+statement of the \emph{identifiability} obstacle that is central to our work.
+
+For multivariate schemes with a public-matrix-times-secret structure, Park et
+al.~\cite{park2018} demonstrated CPA with Hamming-weight and Hamming-distance models on
+the matrix-vector product in Rainbow and UOV. Their setting differs from MQOM in a
+decisive way: in UOV/Rainbow the \emph{known} operand varies across signatures, giving
+classical vertical CPA, whereas in MQOM's analogous multiplication both the public
+matrix and the secret are fixed across signatures.
+
+\section{The Identifiability Problem on Linear Field Maps}
+
+A recent non-profiled CPA study on MAYO~\cite{lampropoulou2026} gives the sharpest
+published statement of the difficulty that linear (as opposed to S-box-like) targets
+pose. The multiplicative-identity hypothesis aliases onto input-load leakage, so a
+global-maximum CPA systematically returns the wrong value; the authors remove the alias
+by partial correlation (regressing the Hamming weight of the input out of the traces
+before correlating). They further observe that increasing the number of traces merely
+reduces the variance of an estimator that is converging on the wrong maximum --- more
+data does not cure a model mismatch on a linear map. This directly informs our
+treatment of MQOM's (linear) correction-value and matrix-multiply targets.
+
+\section{CPA Methodology and Leakage Models}
+
+The correlation distinguisher with a Hamming-weight or Hamming-distance leakage model
+was introduced by Brier et al.~\cite{brier2004cpa}. The stochastic (linear-regression)
+leakage model of Schindler et al.~\cite{schindler2005stochastic} estimates per-bit
+leakage coefficients rather than assuming a perfect Hamming-weight model, and is the
+natural tool for weighted-leakage and model-mismatch studies. Horizontal correlation
+analysis~\cite{clavier2010horizontal} exploits many operations within a single trace,
+which is the relevant mode when the secret meets varying public data \emph{within} one
+signature rather than across signatures. For completeness we also note template
+attacks~\cite{chari2002templates}, SASCA~\cite{veyrat2014sasca}, and the
+information-theoretic evaluation framework of Standaert et al.~\cite{standaert2009}.
+
+\section{Mathematical Cryptanalysis, Fault Attacks, and Masking of MQOM}
+
+Several recent results concern MQOM but are \emph{not} side-channel attacks and must be
+kept categorically separate. Delgado's passive key-recovery analysis~\cite{delgado2026}
+recovers signing-key information from the public transcript by exploiting a saltless
+root-expansion in the v2 lineage --- a protocol-level mathematical attack with no
+physical leakage. (A companion single-signature structural claim was withdrawn by its
+author and is therefore not relied upon here.) Feneuil and
+Rivain~\cite{feneuil2026ggm}, and Kosuge and Xagawa~\cite{kosuge2026formal}, provide
+formal security analyses. On the physical side but via a different mechanism, Sarde et
+al.~\cite{sarde2025fault} mount a \emph{fault} attack on MQOM's MQ evaluation, and
+Jendral and Dubrova~\cite{jendral2025voleith} analyse the VOLEitH scheme FAEST (adjacent
+to, but distinct from, MQOM's TCitH line). Finally, a high-order masking of MQOM~v2.1
+signing~\cite{mqom2026masking} independently confirms the correction/multiplication
+operations as the sensitive, secret-dependent targets, which supports our choice of
+attack points.
+
+\section{Gap Addressed by This Project}
+
+No end-to-end power-analysis key recovery on the MQOM~v2.1 TCitH reference has been
+published. The precedents above establish that field multiplication and
+public-matrix-times-secret products are plausible CPA targets, and that linear targets
+raise genuine identifiability problems. This project addresses that gap in a
+computer-only setting: it builds independent models of MQOM~v2.1's secret-dependent
+intermediates, formulates CPA variants and leakage hypotheses, and determines by
+simulation and analysis whether and how the full secret can be recovered.

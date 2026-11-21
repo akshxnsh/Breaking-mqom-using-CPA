@@ -1,0 +1,119 @@
+{
+  "mismatch_table": [
+    {
+      "true_leakage": "HW_uniform",
+      "attack_model": "signed_HW_CPA",
+      "sigma": 1.0,
+      "n_sig": 3000,
+      "full_suffix_recovery": 1.0,
+      "per_byte_recovery": 1.0,
+      "mean_rank": 0.0
+    },
+    {
+      "true_leakage": "HW_uniform",
+      "attack_model": "signed_HW_CPA",
+      "sigma": 2.0,
+      "n_sig": 3000,
+      "full_suffix_recovery": 1.0,
+      "per_byte_recovery": 1.0,
+      "mean_rank": 0.0
+    },
+    {
+      "true_leakage": "weighted_mild",
+      "attack_model": "signed_HW_CPA",
+      "sigma": 1.0,
+      "n_sig": 3000,
+      "full_suffix_recovery": 1.0,
+      "per_byte_recovery": 1.0,
+      "mean_rank": 0.0
+    },
+    {
+      "true_leakage": "weighted_mild",
+      "attack_model": "signed_HW_CPA",
+      "sigma": 2.0,
+      "n_sig": 3000,
+      "full_suffix_recovery": 1.0,
+      "per_byte_recovery": 1.0,
+      "mean_rank": 0.0
+    },
+    {
+      "true_leakage": "weighted_strong",
+      "attack_model": "signed_HW_CPA",
+      "sigma": 1.0,
+      "n_sig": 3000,
+      "full_suffix_recovery": 1.0,
+      "per_byte_recovery": 1.0,
+      "mean_rank": 0.0
+    },
+    {
+      "true_leakage": "weighted_strong",
+      "attack_model": "signed_HW_CPA",
+      "sigma": 2.0,
+      "n_sig": 3000,
+      "full_suffix_recovery": 1.0,
+      "per_byte_recovery": 1.0,
+      "mean_rank": 0.0
+    },
+    {
+      "true_leakage": "weighted_uniform",
+      "attack_model": "signed_HW_CPA",
+      "sigma": 1.0,
+      "n_sig": 3000,
+      "full_suffix_recovery": 1.0,
+      "per_byte_recovery": 1.0,
+      "mean_rank": 0.0
+    },
+    {
+      "true_leakage": "weighted_uniform",
+      "attack_model": "signed_HW_CPA",
+      "sigma": 2.0,
+      "n_sig": 3000,
+      "full_suffix_recovery": 0.95,
+      "per_byte_recovery": 0.9984375,
+      "mean_rank": 0.0015625
+    },
+    {
+      "true_leakage": "dominant_bit",
+      "attack_model": "signed_HW_CPA",
+      "sigma": 1.0,
+      "n_sig": 3000,
+      "full_suffix_recovery": 1.0,
+      "per_byte_recovery": 1.0,
+      "mean_rank": 0.0
+    },
+    {
+      "true_leakage": "dominant_bit",
+      "attack_model": "signed_HW_CPA",
+      "sigma": 2.0,
+      "n_sig": 3000,
+      "full_suffix_recovery": 0.8,
+      "per_byte_recovery": 0.9921875,
+      "mean_rank": 0.0078125
+    },
+    {
+      "true_leakage": "nonmonotone_flip",
+      "attack_model": "signed_HW_CPA",
+      "sigma": 1.0,
+      "n_sig": 3000,
+      "full_suffix_recovery": 0.0,
+      "per_byte_recovery": 0.0,
+      "mean_rank": 4.4453125
+    },
+    {
+      "true_leakage": "nonmonotone_flip",
+      "attack_model": "signed_HW_CPA",
+      "sigma": 2.0,
+      "n_sig": 3000,
+      "full_suffix_recovery": 0.0,
+      "per_byte_recovery": 0.0,
+      "mean_rank": 4.4171875
+    }
+  ],
+  "lra_degeneracy": {
+    "r2_mean": 0.6793930678856046,
+    "r2_std_across_guesses": 1.4015878649856313e-16,
+    "r2_max_minus_min": 2.220446049250313e-16,
+    "true_key_rank_by_r2": 48,
+    "note": "std ~ 0 confirms LRA(linear basis) cannot distinguish keys on a bare-XOR target"
+  }
+}

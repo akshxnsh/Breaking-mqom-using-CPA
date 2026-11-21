@@ -1,0 +1,81 @@
+\section{Background and Motivation}
+
+The anticipated arrival of large-scale quantum computers threatens the public-key
+cryptography in use today. In response, the National Institute of Standards and
+Technology (NIST) has been standardising post-quantum schemes, and has run a dedicated
+process for additional digital signatures to diversify the mathematical assumptions
+underlying signature schemes. \textbf{MQOM} (``MQ on my Mind'')~\cite{mqomspec} is one
+such candidate. Its security reduces to the hardness of the \emph{Multivariate
+Quadratic} (MQ) problem, and it is constructed using the
+Multi-Party-Computation-in-the-Head (MPCitH) paradigm, more precisely its
+Threshold-Computation-in-the-Head (TCitH) formulation. MQOM advanced to the third round
+of the NIST additional-signatures process; this project studies the second-round
+specification, \textbf{MQOM~v2.1}.
+
+A cryptographic scheme can be mathematically sound yet still be broken on a real device.
+\emph{Side-channel attacks} exploit physical quantities --- most commonly the power
+consumption or electromagnetic emanation of a device --- that depend on the secret data
+being processed. \emph{Correlation Power Analysis} (CPA)~\cite{brier2004cpa} is a
+canonical side-channel technique: the attacker predicts, for each hypothesis about a
+small part of the secret, the value of a secret-dependent intermediate, maps that
+prediction to a leakage model (such as the Hamming weight), and correlates the
+prediction against measured leakage. The hypothesis whose prediction correlates best is
+taken as the recovered secret.
+
+While MQOM's mathematical security has received considerable attention, its resistance
+to side-channel analysis is far less studied. This project asks a focused question:
+\emph{can the permanent secret key $x$ of MQOM~v2.1 be recovered by a CPA-based attack
+exploiting the power leakage of secret-dependent intermediate values?}
+
+\section{Problem Addressed}
+
+The goal of this project is the complete recovery of the permanent secret witness
+$x = (x_1, \dots, x_n)$ of MQOM~v2.1 through a CPA-based technique, with the success
+criterion $\hat{x} = x$ (exact recovery of the full vector), and to establish the
+mathematical conditions under which such recovery is possible. Where a given attack
+point does not yield full recovery, the objective is to characterise rigorously how
+much of the key it recovers, under which leakage model, and why --- and, failing a
+clean recovery, to identify the highest-potential paths supported by our own
+simulation evidence.
+
+\section{Research Constraints}
+
+This is a \textbf{computer-only} study. We deliberately and permanently exclude: physical
+hardware and target devices; power or electromagnetic measurement equipment; real power
+or EM traces; physical side-channel experiments; the official MQOM reference
+implementation; and any compilation, execution or testing of that implementation. We
+rely instead on independent mathematical reimplementations of the relevant operations,
+models of MQOM intermediate values derived from the specification, synthetic leakage
+datasets generated under explicitly stated hypotheses, and standard statistical
+analysis. Consequently, every result in this report is a statement about mathematical
+models and synthetic data; none is a measurement of, or a demonstrated vulnerability in,
+a physical MQOM implementation.
+
+\section{Objectives and Contributions}
+
+The concrete objectives of the project are:
+\begin{itemize}
+\item to reassess MQOM~v2.1's candidate leakage locations under the computer-only
+constraint, keeping only those that expose the secret to known, varying public data as
+required by CPA;
+\item to construct independent, specification-faithful Python models of the surviving
+attack points and of the finite-field arithmetic they use;
+\item to formulate explicit hypothetical leakage models and the matching CPA variants,
+and to determine --- analytically and by simulation --- whether each is
+\emph{identifiable}, i.e.\ whether the correct secret can be distinguished from all
+competing hypotheses;
+\item to demonstrate recovery of the secret (in whole or in characterised part) under
+clearly stated assumptions, with negative controls that guard against
+success-by-construction; and
+\item to evaluate robustness to leakage-model mismatch and noise, and to state honestly
+the limits of what simulation can establish.
+\end{itemize}
+
+\section{Organisation of the Report}
+
+Chapter~\ref{ch:literature} reviews the relevant literature, carefully separating
+physical side-channel analysis from mathematical cryptanalysis and fault attacks.
+Chapter~\ref{ch:new} presents the proposed work: the reassessed attack surface, the
+decomposition of the secret, the leakage-model taxonomy, the CPA formulations, and the
+simulation methodology. Chapter~\ref{ch:result} reports the simulation results obtained
+so far. Chapter~\ref{ch:conclude} draws conclusions and sets out future work.

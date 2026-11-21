@@ -1,0 +1,90 @@
+{
+  "noise_sweep": [
+    {
+      "sigma": 0.0,
+      "n_sig": 4000,
+      "full_suffix_recovery_rate": 1.0,
+      "per_byte_recovery_rate": 1.0,
+      "mean_rank": 0.0,
+      "median_rank": 0.0
+    },
+    {
+      "sigma": 0.5,
+      "n_sig": 4000,
+      "full_suffix_recovery_rate": 1.0,
+      "per_byte_recovery_rate": 1.0,
+      "mean_rank": 0.0,
+      "median_rank": 0.0
+    },
+    {
+      "sigma": 1.0,
+      "n_sig": 4000,
+      "full_suffix_recovery_rate": 1.0,
+      "per_byte_recovery_rate": 1.0,
+      "mean_rank": 0.0,
+      "median_rank": 0.0
+    },
+    {
+      "sigma": 2.0,
+      "n_sig": 4000,
+      "full_suffix_recovery_rate": 1.0,
+      "per_byte_recovery_rate": 1.0,
+      "mean_rank": 0.0,
+      "median_rank": 0.0
+    },
+    {
+      "sigma": 4.0,
+      "n_sig": 4000,
+      "full_suffix_recovery_rate": 1.0,
+      "per_byte_recovery_rate": 1.0,
+      "mean_rank": 0.0,
+      "median_rank": 0.0
+    }
+  ],
+  "traces_to_disclosure": [
+    {
+      "n_sig": 50,
+      "sigma": 2.0,
+      "per_byte_recovery_rate": 0.7140625
+    },
+    {
+      "n_sig": 100,
+      "sigma": 2.0,
+      "per_byte_recovery_rate": 0.940625
+    },
+    {
+      "n_sig": 200,
+      "sigma": 2.0,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "n_sig": 400,
+      "sigma": 2.0,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "n_sig": 800,
+      "sigma": 2.0,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "n_sig": 1600,
+      "sigma": 2.0,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "n_sig": 3200,
+      "sigma": 2.0,
+      "per_byte_recovery_rate": 1.0
+    }
+  ],
+  "negative_controls": {
+    "prefix_constant_data_rank": 153,
+    "shuffled_leakage_rank": 250,
+    "shuffled_top_margin": 0.0002789003919493119,
+    "matched_suffix_rank": 0,
+    "matched_true_corr": 0.5663664918898061,
+    "matched_best_wrong_corr": 0.4429142360723593,
+    "matched_margin": 0.12345225581744684
+  }
+}

@@ -1,0 +1,33 @@
+MQOM (``MQ on my Mind'') is a post-quantum digital signature scheme, built on the
+Multi-Party-Computation-in-the-Head (MPCitH) / Threshold-Computation-in-the-Head (TCitH)
+paradigm, and advanced to the third round of the NIST Additional Digital Signatures
+process. While MQOM's \emph{mathematical} security rests on the hardness of the
+Multivariate Quadratic (MQ) problem, its \emph{implementation} security against
+side-channel analysis is comparatively unexplored. This project investigates whether
+the permanent secret witness $x$ of MQOM~v2.1 can be recovered by Correlation Power
+Analysis (CPA) acting on power leakage of secret-dependent intermediate values.
+
+The study is conducted entirely through mathematics and computer-based simulation. We
+do not use physical hardware, measurement equipment, real power or electromagnetic
+traces, or the official MQOM reference implementation. Instead, we build independent
+Python implementations of the relevant finite-field operations and MQOM intermediate
+values derived from the published specification, generate synthetic leakage under
+explicitly stated hypothetical leakage models, and apply CPA-based distinguishers. We
+are careful throughout to separate specification-established facts, published results,
+our own mathematical deductions, the assumptions used to construct a simulation, and
+the results obtained from that simulation. In particular, synthetic leakage is never
+presented as a physical measurement, and a successful simulated recovery is never
+presented as a demonstrated vulnerability of a real MQOM device.
+
+From an initial attack surface of seven candidate leakage locations we isolate those
+that expose the secret key to \emph{known, per-signature-varying} public data, a
+precondition for CPA. We decompose $x$ into a prefix, consumed by the correlated seed
+tree, and a suffix, whose correction coordinates are public in the signature. For the
+suffix we formulate a vertical key-XOR CPA. Our simulations show that a na\"ive
+absolute-correlation distinguisher suffers an irreducible two-way (complement)
+ambiguity intrinsic to any affine leakage on a bare-XOR target, and that a signed
+distinguisher aligned with the assumed leakage polarity resolves it, recovering the
+full suffix under the stated model. The project further studies robustness to
+leakage-model mismatch and the recovery of the prefix, working towards reconstruction
+of the complete witness, together with an honest account of what simulation can and
+cannot establish.
