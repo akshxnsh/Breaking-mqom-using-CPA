@@ -22,7 +22,7 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results_c_baseli
 def recover_suffix(x, delta, accx, sigma, rng):
     """Attack every suffix byte; return per-byte rank array and recovered vector."""
     ranks = np.full(N_COORDS, -1, dtype=int)
-    xhat = x.copy()
+    xhat = np.zeros(N_COORDS, dtype=np.uint8)   # built purely from argmax (no secret seeding)
     for k in SUFFIX:
         leak = leak_hw(accx[:, k], sigma, rng)
         corr = cpa_byte(delta[:, k], leak)

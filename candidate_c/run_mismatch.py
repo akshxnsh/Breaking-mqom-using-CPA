@@ -88,7 +88,7 @@ def mismatch_table(n_sig=3000, sigmas=(1.0, 2.0), n_keys=20, seed=314):
             for _ in range(n_keys):
                 x = gen_secret(rng)
                 delta, accx = simulate_observations(x, n_sig, rng)
-                xhat = x.copy(); ok_bytes = 0
+                xhat = np.zeros(N_COORDS, dtype=np.uint8); ok_bytes = 0   # argmax only, no secret seeding
                 for k in SUFFIX:
                     leak = leak_weighted(accx[:, k], w, sigma, rng)
                     corr = cpa_byte(delta[:, k], leak, signed=True)   # attacker ASSUMES HW
