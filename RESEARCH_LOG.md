@@ -80,18 +80,91 @@ Candidate working order: C (suffix) -> B / F (prefix) -> assemble full x.
   vulnerability. Failure mode (non-monotone leakage) is identified and bounded.
 - PART 1 (Candidate C) COMPLETE.
 
+## Candidate B — compute_t1 horizontal CPA (PREFIX primary)   (feeds Ch3 model + Ch4 results)
+
+### Spec/Audit basis [Spec][Audit] (MQOM v2.1, piop_default.c compute_t1; commit b8879fe)
+- t1_i = Ahat_i . x + bhat_i per signature. Ahat PUBLIC (from mseed_eq in pk), x SECRET,
+  both FIXED across sigs; USE_PIOP_CACHE => identical intermediates recur every Sign()
+  => VERTICAL AVERAGING across sigs (eff noise sigma/sqrt(n_sig)).
+- Ext-by-base product is byte-serial (gf256_mult_ref hi/lo), NOT SWAR => byte leakage not
+  blurred. TRI_INF triangular => x_j meets ~mhat*(N-j)*2 public multipliers/sig: 1584
+  (j=15) .. 2304 (j=0). This HORIZONTAL axis exists for EVERY coord incl. prefix.
+- Reaches the prefix (bytes 0..15) that Candidate C cannot (Delta_x=0 there). Primary route.
+
+### Attacker model / leakage [Assumption]
+- Known: PUBLIC multipliers a=Ahat_i[r][j] per position; synthetic leakage of product x_j*a.
+  Hidden: x_j. Predict HW(gf256_mult(g,a)), correlate over positions. Leakage depends on
+  x_j only via the real field product (guards success-by-construction).
+
+### KEY FINDING — clean identifiability + the c=g*x^-1 aliasing law  [Deduction + SynResult]
+- NO complement ambiguity (unlike additive suffix). Field mult by fixed a is a bijection
+  in g; wrong-key corr depends ONLY on c=g*x^-1: rho(c)=corr_a(HW(a),HW(c*a)); correct
+  c=1 is the unique max (a wrong c ties only if HW(c*a) affine in HW(a), i.e. c=1). [Deduction]
+- Confirmed: |rho|(c) key-independent (max std 3.4e-2); c=1 -> |rho|=1.000; top aliases
+  c=0x02 (0.63), c=0x8D (0.60); noiseless margin ceiling ~0.37. [SynResult]
+- STRUCTURAL EXCEPTION x_j=0: x_j*a=0 for all a (dead channel) and g=0 is constant => not
+  recoverable. SELF-DETECTED: zero-byte max|rho| mean 0.069 (p95 0.088) vs nonzero mean
+  0.998 (min 0.997); clean split at 0.30 threshold (100% detection). Completed by MQ system
+  in Part 3 — not a silent error. [SynResult]
+
+### Recovery results — horizontal CPA  [SynResult]
+(L=HW(x_j*a)+noise; 40 keys; 100 sigs averaged; recovery over NON-ZERO bytes)
+- NON-ZERO prefix byte recovery = 100% at sigma in {0,0.5,1,2,4,8} (signal std ~1.4).
+  Full raw 16-byte rate dips only via occasional x_j=0 (self-detected).
+- Positions-to-disclosure (coord 8, sigma=2): 19 positions already 100% per byte; real
+  abundance 1584-2304/coord far exceeds the need.
+- Negative controls: all-multiplier-zero channel 0%; shuffled-label null 0% (top margin ~0);
+  matched contrast true 0.998 vs best-wrong 0.618 (margin 0.38).
+- Files: candidate_b/model_b.py, run_baseline.py, results_b_baseline.json. Seeded.
+
+### Model-mismatch / robustness  [SynResult + Deduction]  (attacker always predicts HW)
+(30 keys, 100 sigs; file candidate_b/run_mismatch.py, results_b_mismatch.json)
+- matched HW & realistic weighted-HW (monotone): 100% nonzero recovery, margin ~0.37.
+- NON-MONOTONE stress (one bit backwards): STILL 100% recovery but margin collapses to
+  0.088 (~4x). CONTRAST with Part-1 XOR target which broke to 0%: the MULTIPLICATIVE
+  (nonlinear) horizontal target spreads each secret bit across all output bits, so a
+  backwards bit shrinks the margin rather than inverting the distinguisher. [Deduction]
+- Boundary (single-trace, sigma=4, starved positions): matched HW hits 100% by 512
+  positions; non-monotone only 64% — ~order-of-magnitude more data needed. "More data ->
+  wrong max" (MAYO 2026 / SDitH 2024-1882) did NOT appear with HW prediction under these
+  shapes: added sigs always converged to the truth. [SynResult]
+
+### Status
+- [SynResult] Under monotone leakage, horizontal CPA fully recovers the 16-byte PREFIX;
+  x_j=0 detected + deferred to MQ completion. Demonstration under an assumed model, NOT a
+  physical vulnerability. PART 2 Candidate B COMPLETE.
+
+## Candidate F — correlated-tree delta second-order CPA (PREFIX backup)  (feeds Ch3/Ch4)
+
+### Spec/Audit basis [Spec][Audit] (blc_default.c delta=FirstBits(x); ggm_tree.c)
+- node2=rseed (fresh mask/sig), node3=rseed^delta (masked value); rseed hidden/refreshed
+  => NO first-order handle; only SECOND-ORDER (mask, masked-value) channel.
+
+### KEY FINDING — pooled-HW F recovers HW(delta) ONLY  [Deduction + SynResult]
+- Centered product estimates Cov(HW(r),HW(r^delta)) = 2 - HW(delta)/2: a function of
+  HW(delta) ONLY. No public per-sig input => no classical CPA handle. => recovers the HW
+  CLASS (1 of 9), not the byte. [Deduction]
+- Confirmed: HW(delta) est bias ~0, std 0.02-0.06, 100% HW-class at sigma<=2, stable from
+  ~1000 sigs. ~50 candidates/byte of 256 remain => F ALONE cannot recover the prefix. [SynResult]
+- Bit-level second-order (STRONGER assumption): sign of per-bit cov gives each delta bit =>
+  full-byte 100% (sigma<=2). Delimits F's envelope; not the realistic primary model. [SynResult]
+- Files: candidate_f/model_f.py, run_baseline.py, results_f_baseline.json. Seeded.
+- PART 2 Candidate F (backup) COMPLETE. B is the flagship prefix route; F is the scoped backup.
+
 ## Open threads / next decisions
 - [x] C baseline recovery + complement-ambiguity finding.
 - [x] C model-mismatch / robustness + LRA degeneracy.
-- [ ] PART 2: Prefix (bytes 0..15): Candidate B horizontal CPA and/or Candidate F 2nd-order CPA.
-- [ ] PART 3: Assemble full x = prefix || suffix; verify via public MQ system
-      y_i = x^T A_i x + b_i^T x. Fallback: top-3 high-potential paths if no clean full recovery.
-- [ ] Decide B as flagship deep-dive (identifiability map) vs F for prefix.
+- [x] PART 2: Prefix (bytes 0..15): Candidate B horizontal CPA (primary, full recovery) +
+      Candidate F 2nd-order CPA (backup, HW-class only). B chosen as flagship.
+- [ ] PART 3: Assemble full x = prefix || suffix; complete detected zero/aliased bytes;
+      verify via public MQ system y_i = x^T A_i x + b_i^T x. Fallback: top-3 paths if no
+      clean full recovery.
 
 ## Report mapping (for later)
 - Ch2 Literature: verified refs already compiled in Rev-B assessment + literature-notes.md.
 - Ch3 Proposed Work: candidate taxonomy, prefix/suffix split, leakage taxonomy, CPA variants.
 - Ch4 Results: GF(256) validation; Candidate C complement-ambiguity finding + recovery
-  tables + controls; (pending) B/F + full-vector assembly + mismatch.
+  tables + controls; Candidate B horizontal CPA prefix recovery + c=g*x^-1 aliasing law +
+  x_j=0 self-detection + mismatch; Candidate F HW-class ceiling; (pending) full-vector assembly.
 - Ch5 Conclusions: C suffix recovered under HW model; identifiability lesson; full-x path.
 - LaTeX scaffold already built under `report/` (LNMIIT template) — parked until conclusions solid.
