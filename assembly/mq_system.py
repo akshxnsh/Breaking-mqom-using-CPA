@@ -52,6 +52,25 @@ def mq_eval(A, b, x):
     return np.bitwise_xor(quad, lin).astype(np.uint8)
 
 
+def mq_eval_batch(A, b, X, chunk=2048):
+    """
+    Evaluate the MQ system for a BATCH of candidate vectors.
+    X : (K, N) uint8.  Returns Y : (K, M) uint8.  Chunked over K to bound memory.
+    Used by Part-3 completion to brute-fill rare self-detected zero bytes fast.
+    """
+    X = X.astype(np.uint8)
+    K = X.shape[0]
+    out = np.zeros((K, A.shape[0]), dtype=np.uint8)
+    for s in range(0, K, chunk):
+        Xc = X[s:s + chunk]                                  # (k, N)
+        outer = mul(Xc[:, :, None], Xc[:, None, :])          # (k, N, N)
+        quad = np.bitwise_xor.reduce(
+            mul(A[None], outer[:, None]).reshape(Xc.shape[0], A.shape[0], -1), axis=2)
+        lin = np.bitwise_xor.reduce(mul(b[None], Xc[:, None, :]), axis=2)
+        out[s:s + chunk] = np.bitwise_xor(quad, lin)
+    return out
+
+
 def keygen(rng):
     """Generate a full instance: secret x, public (A, b), and public image y."""
     x = rng.integers(0, 256, size=N, dtype=np.uint8)
