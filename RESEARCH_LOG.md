@@ -151,14 +151,47 @@ Candidate working order: C (suffix) -> B / F (prefix) -> assemble full x.
 - Files: candidate_f/model_f.py, run_baseline.py, results_f_baseline.json. Seeded.
 - PART 2 Candidate F (backup) COMPLETE. B is the flagship prefix route; F is the scoped backup.
 
+## Part 3 — assembly + MQ verification (FULL-VECTOR recovery)  (feeds Ch3/Ch4/Ch5)
+
+### Public MQ model [Spec] (assembly/mq_system.py)
+- y_i = x^T A_i x + b_i^T x over GF(256), n=48, m=48, A_i upper-triangular (uniform).
+- SHARP certifier [SynResult]: true x -> 48/48; one wrong byte -> 0/48 (quadratic
+  coupling cascades the error); random -> ~m/256. False-cert prob ~256^-48 ~ 0.
+- Role: COMBINE/VERIFY/COMPLETE only — never primary recovery.
+
+### Completion/verification procedure [Deduction]
+- Candidates = {2 suffix polarities} x {256^u fills of u self-detected zero bytes};
+  u=0 usually, 1 occasionally, >=2 ~0.2%. Keep the UNIQUE candidate satisfying all m
+  eqns (batched mq_eval_batch). Uniqueness guaranteed by the sharp-certifier property.
+
+### FULL-VECTOR RECOVERY results [SynResult] (assembly/run_full_recovery.py)
+- Exact x_hat==x: 100% at sigma in {0,1,2} (40 keys; suffix 300 sigs / prefix 100),
+  ZERO false certifications.
+- sigma=4 dip (2.5%) is the SUFFIX front's signature budget (Part-1 property), NOT
+  assembly: at sigma=4, suffix sigs 300->0%, 800->86.7%, 2000/4000->100%. Prefix (B)
+  already robust at sigma=4.
+- Global polarity: feeding the complemented suffix -> MQ selects 'complemented' branch,
+  recovers x. At most 2 global candidates, never 2^32.
+- Zero-byte completion: force x[5]=0 -> B flags coord5 unknown -> MQ completes to 0 ->
+  full recovery. Every occurring zero byte completed, 0 false certs.
+- Negative control: sabotage one recovered byte -> MQ certifies NOTHING (sound).
+- Files: assembly/{mq_system.py, assemble.py, run_full_recovery.py, results_full_recovery.json}.
+
+### Status — OBJECTIVE ACHIEVED [SynResult]
+- Two-front CPA pipeline recovers the COMPLETE 48-byte witness x exactly (x_hat==x) in
+  simulation (suffix=C, prefix=B; MQ resolves polarity + completes zero byte + certifies).
+  100% across keys once each front is in its working regime. Demonstration under stated
+  synthetic models, NOT a real-device vulnerability. Fallback top-3 NOT required (clean
+  full recovery). PART 3 COMPLETE.
+
 ## Open threads / next decisions
 - [x] C baseline recovery + complement-ambiguity finding.
 - [x] C model-mismatch / robustness + LRA degeneracy.
-- [x] PART 2: Prefix (bytes 0..15): Candidate B horizontal CPA (primary, full recovery) +
-      Candidate F 2nd-order CPA (backup, HW-class only). B chosen as flagship.
-- [ ] PART 3: Assemble full x = prefix || suffix; complete detected zero/aliased bytes;
-      verify via public MQ system y_i = x^T A_i x + b_i^T x. Fallback: top-3 paths if no
-      clean full recovery.
+- [x] PART 2: Prefix via Candidate B horizontal CPA (primary, full recovery) + Candidate F
+      2nd-order CPA (backup, HW-class only). B chosen as flagship.
+- [x] PART 3: Assemble x = prefix || suffix; MQ resolves polarity + completes zero bytes +
+      certifies x_hat==x. Full-vector recovery achieved; fallback not needed.
+- [ ] Write the LNMIIT LaTeX report from the three part write-ups (conclusions now solid).
 
 ## Report mapping (for later)
 - Ch2 Literature: verified refs already compiled in Rev-B assessment + literature-notes.md.
@@ -166,5 +199,6 @@ Candidate working order: C (suffix) -> B / F (prefix) -> assemble full x.
 - Ch4 Results: GF(256) validation; Candidate C complement-ambiguity finding + recovery
   tables + controls; Candidate B horizontal CPA prefix recovery + c=g*x^-1 aliasing law +
   x_j=0 self-detection + mismatch; Candidate F HW-class ceiling; (pending) full-vector assembly.
-- Ch5 Conclusions: C suffix recovered under HW model; identifiability lesson; full-x path.
-- LaTeX scaffold already built under `report/` (LNMIIT template) — parked until conclusions solid.
+- Ch5 Conclusions: full-vector x recovered (C suffix + B prefix + MQ combine/verify/complete)
+  under monotone-leakage assumption; identifiability lessons; conditions + scope.
+- LaTeX scaffold under `report/` (LNMIIT template) — conclusions now solid; ready to write up.

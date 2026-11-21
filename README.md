@@ -36,10 +36,16 @@ candidate_f/                 Part 2 — correlated-tree delta (prefix, BACKUP)
   model_f.py                 audit-derived model, second-order (mask, masked-value) CPA
   run_baseline.py            pooled-HW HW-class ceiling + bit-level envelope
   results_*.json             saved numeric results
+assembly/                    Part 3 — full-vector assembly + MQ verification
+  mq_system.py               independent public MQ relation y=x^T A x + b^T x (certifier)
+  assemble.py                end-to-end: run both CPA fronts on one secret
+  run_full_recovery.py       MQ resolves polarity + completes zero bytes + certifies x_hat==x
+  results_full_recovery.json saved numeric results
 RESEARCH_LOG.md              running lab log (tagged, maps to report chapters)
 docs/
-  part1_candidate_c.md       completed Part 1 write-up
+  part1_candidate_c.md       completed Part 1 write-up (suffix)
   part2_prefix.md            completed Part 2 write-up (B primary + F backup)
+  part3_assembly.md          completed Part 3 write-up (full-vector recovery)
 report/                      LNMIIT LaTeX report scaffold (parked until conclusions solid)
 ```
 
@@ -56,7 +62,14 @@ report/                      LNMIIT LaTeX report scaffold (parked until conclusi
   Part-1 additive target. Wrong-key aliasing follows the `c = g*x^-1` law; `x_j = 0` is a
   self-detected structural blind spot deferred to MQ completion. Candidate F (second-order)
   is a scoped backup: pooled-HW recovers only `HW(delta)` (HW class), not the byte.
-- **Part 3 — Full-vector assembly + MQ-system verification (+ fallback top-3 paths):** pending.
+- **Part 3 — Full-vector assembly + MQ-system verification:** COMPLETE — **objective met.**
+  The two-front CPA pipeline recovers the complete 48-byte witness `x` exactly
+  (`x_hat == x`) in simulation: suffix via Candidate C, prefix via Candidate B, with the
+  public MQ system (used only to combine/verify/complete) resolving the single global
+  polarity bit, completing the rare self-detected `x_j = 0` byte, and certifying the result.
+  Exact full-vector recovery is 100% across keys once each front is in its working regime
+  (the high-noise bottleneck is the suffix front's signature budget, not assembly); false
+  certifications are 0. The fallback top-3 paths are not required.
 
 ## Reproducing
 
@@ -67,5 +80,7 @@ python3 candidate_c/run_mismatch.py  # Part 1 robustness
 python3 candidate_b/run_baseline.py  # Part 2 prefix (B) baseline
 python3 candidate_b/run_mismatch.py  # Part 2 prefix (B) robustness
 python3 candidate_f/run_baseline.py  # Part 2 prefix (F) backup
+python3 assembly/mq_system.py        # Part 3 MQ-system self-test
+python3 assembly/run_full_recovery.py # Part 3 full-vector recovery + verification
 ```
 All randomness is seeded. Requires numpy.
