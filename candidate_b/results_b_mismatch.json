@@ -1,0 +1,298 @@
+{
+  "mismatch_sweep": [
+    {
+      "gen_shape": "matched_HW",
+      "sigma": 0.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.3658880083123452,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "matched_HW",
+      "sigma": 1.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.3648556981318403,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "matched_HW",
+      "sigma": 2.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.3620278735569925,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "matched_HW",
+      "sigma": 4.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.35145671943927886,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "matched_HW",
+      "sigma": 8.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.3169504416566699,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "weighted_HW_monotone",
+      "sigma": 0.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.3751009360076604,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "weighted_HW_monotone",
+      "sigma": 1.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.3738662247359807,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "weighted_HW_monotone",
+      "sigma": 2.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.37115348069931,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "weighted_HW_monotone",
+      "sigma": 4.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.3609801340108471,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "weighted_HW_monotone",
+      "sigma": 8.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.32734337133546476,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "sigma": 0.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.08840953664292032,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "sigma": 1.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.08821490285296432,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "sigma": 2.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.08753391080830307,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "sigma": 4.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.08479630632397868,
+      "frac_negative_margin": 0.0
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "sigma": 8.0,
+      "n_sig": 100,
+      "nonzero_byte_recovery_rate": 1.0,
+      "mean_margin": 0.07590577332019546,
+      "frac_negative_margin": 0.0
+    }
+  ],
+  "wrongmax_probe": [
+    {
+      "gen_shape": "matched_HW",
+      "sigma": 2.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "gen_shape": "matched_HW",
+      "sigma": 2.0,
+      "n_sig": 10,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "gen_shape": "matched_HW",
+      "sigma": 2.0,
+      "n_sig": 100,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "gen_shape": "matched_HW",
+      "sigma": 2.0,
+      "n_sig": 1000,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "gen_shape": "weighted_HW_monotone",
+      "sigma": 2.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "gen_shape": "weighted_HW_monotone",
+      "sigma": 2.0,
+      "n_sig": 10,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "gen_shape": "weighted_HW_monotone",
+      "sigma": 2.0,
+      "n_sig": 100,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "gen_shape": "weighted_HW_monotone",
+      "sigma": 2.0,
+      "n_sig": 1000,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "sigma": 2.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "sigma": 2.0,
+      "n_sig": 10,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "sigma": 2.0,
+      "n_sig": 100,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "sigma": 2.0,
+      "n_sig": 1000,
+      "per_byte_recovery_rate": 1.0
+    }
+  ],
+  "nonmono_boundary": [
+    {
+      "gen_shape": "matched_HW",
+      "positions": 8,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.013333333333333334
+    },
+    {
+      "gen_shape": "matched_HW",
+      "positions": 16,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.05333333333333334
+    },
+    {
+      "gen_shape": "matched_HW",
+      "positions": 32,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.12
+    },
+    {
+      "gen_shape": "matched_HW",
+      "positions": 64,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.37
+    },
+    {
+      "gen_shape": "matched_HW",
+      "positions": 128,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.7333333333333333
+    },
+    {
+      "gen_shape": "matched_HW",
+      "positions": 256,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.98
+    },
+    {
+      "gen_shape": "matched_HW",
+      "positions": 512,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 1.0
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "positions": 8,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.006666666666666667
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "positions": 16,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.023333333333333334
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "positions": 32,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.04
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "positions": 64,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.09333333333333334
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "positions": 128,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.24666666666666667
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "positions": 256,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.4766666666666667
+    },
+    {
+      "gen_shape": "non_monotone_stress",
+      "positions": 512,
+      "sigma": 4.0,
+      "n_sig": 1,
+      "per_byte_recovery_rate": 0.64
+    }
+  ]
+}
