@@ -31,9 +31,11 @@ Part 3 resolves both with the **public MQ system**, then certifies the assembled
 `m = 48`. Modelled independently in `mq_system.py` (`A_i` upper-triangular, uniform).
 
 [SynResult] It is a **sharp certifier**: the true `x` satisfies all 48 equations; a
-vector wrong in even one byte satisfies **0/48** (the quadratic coupling cascades a single
-error across all equations); a random vector satisfies ~`m/256`. So a false certification
-has probability ~`256^-m` — effectively zero.
+vector wrong in even one byte satisfies **≈0/48** — at most a few equations by chance
+(empirically ≤3/48 over thousands of single-byte flips; expected ~`m/256 ≈ 0.19`), never
+all 48 — because the quadratic coupling cascades a single error across the equations; a
+random vector likewise satisfies ~`m/256`. So a false certification has probability
+~`256^-m` — effectively zero.
 
 **Integrity.** Algebra is used ONLY to (a) pick the global polarity, (b) complete the few
 flagged zero bytes, and (c) certify. The 48 bytes themselves are recovered by CPA. The MQ

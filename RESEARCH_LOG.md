@@ -47,7 +47,8 @@ Candidate working order: C (suffix) -> B / F (prefix) -> assemble full x.
   true key -> +0.8229, complement -> -0.8229 (separated). [Deduction]
 - Residual: polarity is a SINGLE GLOBAL sign (same all bytes) => at most 2 global
   candidates for whole suffix, trivially disambiguated by the public MQ system; NOT
-  2^32. So suffix recovery is effectively unconditional once polarity fixed. [Deduction]
+  2^32. So suffix recovery is effectively unconditional once polarity fixed -- UNDER the
+  monotone-leakage assumption (non-monotone is the bounded exception). [Deduction]
 
 ### Recovery results — signed vertical key-XOR CPA  [SynResult]
 (L = HW(acc_x)+noise; 30 independent keys; 4000 signatures)
@@ -155,8 +156,9 @@ Candidate working order: C (suffix) -> B / F (prefix) -> assemble full x.
 
 ### Public MQ model [Spec] (assembly/mq_system.py)
 - y_i = x^T A_i x + b_i^T x over GF(256), n=48, m=48, A_i upper-triangular (uniform).
-- SHARP certifier [SynResult]: true x -> 48/48; one wrong byte -> 0/48 (quadratic
-  coupling cascades the error); random -> ~m/256. False-cert prob ~256^-48 ~ 0.
+- SHARP certifier [SynResult]: true x -> 48/48; one wrong byte -> ~0/48 (<=3/48 by chance
+  over thousands of flips, never 48/48; quadratic coupling cascades the error); random ->
+  ~m/256. False-cert prob ~256^-48 ~ 0.
 - Role: COMBINE/VERIFY/COMPLETE only — never primary recovery.
 
 ### Completion/verification procedure [Deduction]

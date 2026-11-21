@@ -57,7 +57,8 @@ with Hamming weight" polarity — true key -> +rho, complement -> -rho. The comp
 *most negative* hypothesis, so argmax of signed correlation returns x.
 Residual: polarity is a single global sign (same for all bytes), so at most **2 global
 candidates** for the whole suffix, trivially disambiguated by the public MQ system — not
-2^32. Suffix recovery is effectively unconditional once polarity is fixed.
+2^32. Under the monotone-leakage assumption, suffix recovery is effectively unconditional
+once polarity is fixed (non-monotone leakage is the bounded exception — see §5).
 
 ## 4. Recovery results (signed vertical key-XOR CPA)
 

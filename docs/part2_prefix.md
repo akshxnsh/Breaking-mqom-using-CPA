@@ -79,8 +79,10 @@ Recovery reported over NON-ZERO bytes (x_j=0 is the structural case above).
 |---:|---:|---:|
 | 0.0 / 0.5 / 1.0 / 2.0 / 4.0 / 8.0 | **100%** | 100% |
 
-Positions-to-disclosure (coord 8, sigma = 2): **19 positions already give 100%** per byte
-— horizontal abundance (1584–2304/coord) is far beyond what recovery needs. Negative
+Positions-to-disclosure (coord 8, sigma = 2, with ~100 averaged signatures ⇒ effective
+per-position noise ≈ σ/√100 ≈ 0.2): **19 positions already give 100%** per byte —
+horizontal abundance (1584–2304/coord) is far beyond what recovery needs. (Single-trace,
+no averaging, needs ~256–512 positions — see §5 boundary.) Negative
 controls: all-multiplier-zero channel 0%, shuffled-label null 0% (top margin ~0);
 matched contrast true 0.998 vs best-wrong 0.618 (margin 0.38).
 
@@ -128,7 +130,8 @@ delimits F's envelope but is not the realistic primary model.
 [SynResult] Under the physically-standard monotone-leakage assumption, **Candidate B
 horizontal CPA fully recovers the 16-byte prefix of the MQOM v2.1 witness** in simulation:
 every nonzero byte at 100% across a wide noise range from only ~100 averaged signatures
-(indeed ~19 horizontal positions suffice), robust to monotone weight mismatch and far more
+(indeed ~19 horizontal positions suffice given ~100 averaged signatures), robust to
+monotone weight mismatch and far more
 robust to non-monotone leakage than Part 1's additive target. The single structural
 exception `x_j = 0` is detected, not silently wrong, and is completed by the public MQ
 system in Part 3. Candidate F is a genuine but partial backup (pooled-HW ⇒ HW class only).
