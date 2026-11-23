@@ -77,19 +77,28 @@ def find_demo_key(rng_seed, max_tries=2000):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=None,
-                     help="Fixed random seed (reproducible run). Default: auto-pick a "
-                          "demo-friendly seed near 20261122.")
+                     help="Fixed random seed, for a REPEATABLE run (same key every time "
+                          "you use this number). Default: a genuinely fresh random key "
+                          "every run, pulled from the OS's randomness, not reproducible.")
     args = ap.parse_args()
 
-    base_seed = args.seed if args.seed is not None else 20261122
-    seed = base_seed if args.seed is not None else find_demo_key(base_seed)
+    if args.seed is not None:
+        seed = args.seed
+    else:
+        # True randomness each run (OS entropy), auto-nudged to a key that also shows
+        # the flagged-zero-byte moment, for a nicer demo -- but still a fresh key
+        # every time, not the same one run after run.
+        fresh_base = int(np.random.SeedSequence().entropy % (2**31))
+        seed = find_demo_key(fresh_base)
 
     print("=" * 60)
     print("  MQOM v2.1 -- Full Secret Key Recovery via CPA (simulation)")
     print("=" * 60)
 
     banner("[STEP 0] Setting up the experiment")
-    print(f"  -> Random seed fixed: {seed}  (reproducible)")
+    mode_note = "fixed by --seed, so this run is repeatable" if args.seed is not None \
+        else "freshly randomized this run, not repeatable"
+    print(f"  -> Random seed: {seed}  ({mode_note})")
     rng = np.random.default_rng(seed)
     x = rng.integers(0, 256, N_COORDS, dtype=np.uint8)
     print(f"  -> Generating secret key x ({N_COORDS} bytes)... done  [HIDDEN from attacker]")
